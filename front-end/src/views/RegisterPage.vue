@@ -6,11 +6,11 @@
           <img class="logo" src="/static/images/logo.png" />
           <div class="tagline">Task management tool for study</div>
         </div>
-        <form>
-          <div v-show="errorMessage" class="alert alert-danger failed"></div>
+        <form @submit.prevent="submitForm">
+          <div v-show="errorMessage" class="alert alert-danger failed">{{ errorMessage }}</div>
           <div class="from-group">
             <label for="username">Username</label>
-            <input type="text" class="form-control" id="username" value="" />
+            <input type="text" class="form-control" id="username" v-model="form.username" />
             <div class="field-error"></div>
           </div>
           <div class="from-group">
@@ -19,7 +19,7 @@
               type="email"
               class="form-control"
               id="emailAddress"
-              value=""
+              v-model="form.emailAddress"
             />
             <div class="field-error"></div>
           </div>
@@ -29,7 +29,7 @@
               type="password"
               class="form-control"
               id="password"
-              value=""
+              v-model="form.password"
             />
             <div class="field-error"></div>
           </div>
@@ -57,6 +57,35 @@
     </footer>
   </div>
 </template>
+<script>
+import registrationService from '@/services/registration'
+
+export default {
+  name: 'RegisterPage',
+  data: function () {
+    return {
+      form: {
+        username: '',
+        emailAddress: '',
+        password: ''
+      },
+      errorMessage: ''
+    }
+  },
+  methods: {
+    submitForm() {
+      // TODO: 데이터 검증
+      registrationService.register(this.form).then(() => {
+        this.$router.push({ name: 'LoginPage' })
+      }).catch(error => {
+        this.errorMessage = 'Failed to register user. Reason: ' +
+          (error.message ? error.message : 'Unknown') + '.'
+      })
+
+    }
+  }
+}
+</script>
 <style lang="scss" scoped>
 .container {
   max-width: 900px;
